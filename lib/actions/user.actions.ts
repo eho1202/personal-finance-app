@@ -7,6 +7,7 @@ import { CountryCode, ProcessorTokenCreateRequest, ProcessorTokenCreateRequestPr
 import { plaidClient } from "@/lib/plaid";
 import { revalidatePath } from "next/cache";
 import { addFundingSource, createDwollaCustomer } from "./dwolla.actions";
+import { ObjectId } from "mongodb";
 
 interface CookieOptions {
     httpOnly?: boolean;
@@ -16,9 +17,35 @@ interface CookieOptions {
     maxAge?: number;
 }
 
+export const getUserInfo = async ({ userId }: getUserInfoProps) => {
+    try {
+        const db = await getDatabase();
+        const usersCollection = db.collection('users');
+        const user = await usersCollection.findOne({ userId: userId });
+
+        return parseStringify(user);
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 export const signIn = async ({email, password}: signInProps) => {
     try {
         const cookieStore = await cookies();
+        
+        // Check if user already has a valid session
+        const existingToken = cookieStore.get('better-auth.session_token')?.value;
+        if (existingToken) {
+            const db = await getDatabase();
+            const sessionsCollection = db.collection('session');
+            const session = await sessionsCollection.findOne({ token: existingToken });
+            
+            if (session && session.userId) {
+                const user = await getUserInfo({ userId: session.userId.toString() });
+                return parseStringify(user);
+            }
+        }
+
         const requestHeaders = await headers();
         
         // Create a Headers object with existing cookies
@@ -44,15 +71,17 @@ export const signIn = async ({email, password}: signInProps) => {
         if (response?.token) {
             const cookieOptions: CookieOptions = {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                sameSite: 'lax',
+                secure: true,
+                sameSite: 'strict',
                 path: '/',
             };
             
             cookieStore.set('better-auth.session_token', response.token, cookieOptions);
         }
 
-        return parseStringify(response);
+        const user = await getUserInfo({ userId: response?.user.id });
+
+        return parseStringify(user);
     } catch (error) {
         console.error("Error", error);
         throw error;
@@ -94,7 +123,6 @@ export const signUp = async (userData: SignUpParams) => {
                 secure: true,
                 sameSite: 'strict',
                 path: '/',
-                maxAge: 60 * 60 * 24 * 7, // 7 days
             };
             
             cookieStore.set('better-auth.session_token', response.token, cookieOptions);
@@ -191,8 +219,7 @@ export async function getLoggedInUser() {
         }
 
         // Query for the user using the _id field (which is the ObjectId from the session)
-        const usersCollection = db.collection('users');
-        const userProfile = await usersCollection.findOne({ userId: session.userId.toString() });
+        const userProfile = await getUserInfo({ userId: session.userId.toString() });
         
         if (!userProfile) {
             console.log("Custom user profile not found in MongoDB");
@@ -255,9 +282,9 @@ export const createLinkToken = async (user: User) => {
             },
             client_name: `${user.firstName} ${user.lastName}`,
             products: ['auth'] as Products[],
+            additional_consented_products: ['transactions'] as Products[],
             language: 'en',
             country_codes: ['US'] as CountryCode[],
-
         }
 
         const response = await plaidClient.linkTokenCreate(tokenParams);
@@ -275,6 +302,8 @@ export const createBankAccount = async ({ userId, bankId, accountId, accessToken
 
         const existingBankAccount = await banksCollection.findOne({ accountId: accountId });
 
+        let bankId_str = '';
+
         if (!existingBankAccount) {
             const bankDocument = {
                 accountId: accountId,
@@ -285,10 +314,14 @@ export const createBankAccount = async ({ userId, bankId, accountId, accessToken
                 userId: userId,
             }
             
-            await banksCollection.insertOne(bankDocument);
+            const result = await banksCollection.insertOne(bankDocument);
+            bankId_str = result.insertedId.toString();
+        } else {
+            bankId_str = existingBankAccount._id.toString();
         }
 
         const bank = {
+            $id: bankId_str,
             accountId: accountId,
             bankId: bankId,
             accessToken: accessToken,
@@ -357,5 +390,31 @@ export const exchangePublicToken = async ({ publicToken, user }: exchangePublicT
         return parseStringify({ publicTokenExchange: "complete" });
     } catch (error) {
         console.log(error);
+    }
+}
+
+export const getBanks = async ({ userId }: getBanksProps) => {
+    try {
+        const db = await getDatabase();
+        const banksCollection = db.collection('banks');
+        const banks = await banksCollection.find({ userId: userId }).toArray();
+
+        return parseStringify(banks);
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getBank = async ({ documentId }: getBankProps) => {
+    try {
+        const db = await getDatabase();
+        const banksCollection = db.collection('banks');
+        const bank = await banksCollection.findOne({ accountId: documentId });
+
+        return parseStringify(bank);
+    } catch (error) {
+        console.log("Error getting bank:", error);
+        return null;
     }
 }

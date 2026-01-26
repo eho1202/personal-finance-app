@@ -92,11 +92,23 @@ export const topCategoryStyles = {
 };
 
 export const transactionCategoryStyles = {
-  "Food and Drink": {
+  "FOOD_AND_DRINK": {
     borderColor: "border-pink-600",
     backgroundColor: "bg-pink-500",
     textColor: "text-pink-700",
     chipBackgroundColor: "bg-inherit",
+  },
+  "ENTERTAINMENT" : {
+    borderColor: "border-purple-600",
+    backgroundColor: "bg-purple-500",
+    textColor: "text-purple-700",
+    chipBackgroundColor: "bg-inherit",
+  },
+  "TRAVEL" : {
+    borderColor: "border-[#0047AB]",
+    backgroundColor: "bg-blue-500",
+    textColor: "text-blue-700",
+    chipBackgroundColor: "bg-[#ECFDF3]",
   },
   Payment: {
     borderColor: "border-success-600",

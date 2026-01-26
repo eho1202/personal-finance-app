@@ -78,7 +78,8 @@ export function formatAmount(amount: number): string {
 
 export const parseStringify = (value: any) => JSON.parse(JSON.stringify(value));
 
-export const removeSpecialCharacters = (value: string) => {
+export const removeSpecialCharacters = (value: string | null | undefined) => {
+  if (!value) return '';
   return value.replace(/[^\w\s]/gi, "");
 };
 
