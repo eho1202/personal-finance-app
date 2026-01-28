@@ -64,7 +64,7 @@ declare type Account = {
 
 declare type Transaction = {
   id: string;
-  $id: string;
+  _id: string;
   name: string;
   paymentChannel: string;
   type: string;
@@ -75,7 +75,7 @@ declare type Transaction = {
   date: string;
   image: string;
   type: string;
-  $createdAt: string;
+  createdAt: string;
   channel: string;
   senderBankId: string;
   receiverBankId: string;

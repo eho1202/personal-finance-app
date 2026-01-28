@@ -50,7 +50,20 @@ export const ITEMS = [
 ];
 
 export const topCategoryStyles = {
-  "Food and Drink": {
+  ENTERTAINMENT: {
+    bg: "bg-purple-25",
+    circleBg: "bg-purple-100",
+    text: {
+      main: "text-purple-900",
+      count: "text-purple-700",
+    },
+    progress: {
+      bg: "bg-purple-100",
+      indicator: "bg-purple-700",
+    },
+    icon: "/icons/music.svg",
+  },
+  FOOD_AND_DRINK: {
     bg: "bg-blue-25",
     circleBg: "bg-blue-100",
     text: {
@@ -63,20 +76,7 @@ export const topCategoryStyles = {
     },
     icon: "/icons/monitor.svg",
   },
-  Travel: {
-    bg: "bg-success-25",
-    circleBg: "bg-success-100",
-    text: {
-      main: "text-success-900",
-      count: "text-success-700",
-    },
-    progress: {
-      bg: "bg-success-100",
-      indicator: "bg-success-700",
-    },
-    icon: "/icons/coins.svg",
-  },
-  default: {
+  TRAVEL: {
     bg: "bg-pink-25",
     circleBg: "bg-pink-100",
     text: {
@@ -89,22 +89,48 @@ export const topCategoryStyles = {
     },
     icon: "/icons/shopping-bag.svg",
   },
+  TRANSPORTATION: {
+    bg: "bg-pink-25",
+    circleBg: "bg-pink-100",
+    text: {
+      main: "text-pink-900",
+      count: "text-pink-700",
+    },
+    progress: {
+      bg: "bg-pink-100",
+      indicator: "bg-pink-700",
+    },
+    icon: "/icons/shopping-bag.svg",
+  },
+  default: {
+    bg: "bg-success-25",
+    circleBg: "bg-success-100",
+    text: {
+      main: "text-success-900",
+      count: "text-success-700",
+    },
+    progress: {
+      bg: "bg-success-100",
+      indicator: "bg-success-700",
+    },
+    icon: "/icons/coins.svg",
+  },
 };
 
 export const transactionCategoryStyles = {
-  "FOOD_AND_DRINK": {
+  FOOD_AND_DRINK: {
     borderColor: "border-pink-600",
     backgroundColor: "bg-pink-500",
     textColor: "text-pink-700",
     chipBackgroundColor: "bg-inherit",
   },
-  "ENTERTAINMENT" : {
+  ENTERTAINMENT: {
     borderColor: "border-purple-600",
     backgroundColor: "bg-purple-500",
     textColor: "text-purple-700",
     chipBackgroundColor: "bg-inherit",
   },
-  "TRAVEL" : {
+  TRAVEL: {
     borderColor: "border-[#0047AB]",
     backgroundColor: "bg-blue-500",
     textColor: "text-blue-700",

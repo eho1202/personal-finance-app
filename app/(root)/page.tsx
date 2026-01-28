@@ -10,12 +10,12 @@ const Home = async ({ searchParams }: SearchParamProps) => {
   const { id, page } = await searchParams;
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
-  const accounts = await getAccounts({ userId: loggedIn.$id })
+  const accounts = await getAccounts({ userId: loggedIn.$id });
 
   if (!accounts) return;
 
   const accountsData = accounts.data;
-  const accountId = (id as string) || accountsData[0].id; // Use appwriteItemId for fetching account data
+  const accountId = (id as string) || accountsData[0].id; 
 
   // Fetch transactions for all accounts
   const allAccountsWithTransactions = await Promise.all(
@@ -23,14 +23,14 @@ const Home = async ({ searchParams }: SearchParamProps) => {
       const accountData = await getAccount({ appwriteItemId: acc.id });
       return {
         ...acc,
-        transactions: accountData?.transactions || []
+        transactions: accountData?.transactions
       };
     })
   );
 
   // Flatten all transactions from all accounts
   const allTransactions = allAccountsWithTransactions.flatMap(acc => 
-    (acc.transactions || []).map((transaction: Transaction) => ({
+    (acc.transactions).map((transaction: Transaction) => ({
       ...transaction,
       accountId: acc.id // Ensure each transaction has the account id
     }))
@@ -61,7 +61,7 @@ const Home = async ({ searchParams }: SearchParamProps) => {
       </div>
       <RightSidebar 
         user={loggedIn}
-        transactions={accounts?.transactions}
+        transactions={allTransactions}
         banks={accountsData?.slice(0, 2)}
       />
     </section>

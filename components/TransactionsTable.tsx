@@ -54,21 +54,21 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
                             <TableCell className={`pl-2 pr-10 font-semibold ${isDebit || amount[0] === '-' ? 'text-[#f04438]' : 'text-[#039855]'}`}>
                                 {isDebit ? `-${amount}` : isCredit ? amount : amount}
                             </TableCell>
-                            
+
                             <TableCell className='pl-2 pr-10'>
                                 <CategoryBadge category={status} />
                             </TableCell>
-                            
+
                             <TableCell className='min-w-32 pl-2 pr-10'>
                                 {formatDateTime(new Date(t.date)).dateTime}
                             </TableCell>
-                            
+
                             <TableCell className='pl-2 pr-10 capitalize'>
                                 {t.paymentChannel}
                             </TableCell>
-                            
+
                             <TableCell className='pl-2 pr-10 max-md:hidden'>
-                                <CategoryBadge category={t.category}/>
+                                <CategoryBadge category={t.category} />
                             </TableCell>
                         </TableRow>
                     )

@@ -418,3 +418,16 @@ export const getBank = async ({ documentId }: getBankProps) => {
         return null;
     }
 }
+
+export const getBankByAccountId = async ({ accountId }: getBankByAccountIdProps) => {
+    try {
+        const db = await getDatabase();
+        const banksCollection = db.collection('banks');
+        const bank = await banksCollection.findOne({ accountId: accountId });
+
+        return parseStringify(bank);
+    } catch (error) {
+        console.log("Error getting bank:", error);
+        return null;
+    }
+}
