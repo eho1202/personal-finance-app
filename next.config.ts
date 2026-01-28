@@ -1,16 +1,13 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   typescript: {
     ignoreBuildErrors: true
   },
-  eslint: {
-    ignoreDuringBuilds: true
-  }
-} as NextConfig;
+} ;
 
 export default withSentryConfig(nextConfig, {
   // For all available options, see:
