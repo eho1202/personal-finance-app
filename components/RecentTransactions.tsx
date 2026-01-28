@@ -1,7 +1,6 @@
 'use client'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BankTabItem } from './BankTabItem'
 import BankInfo from './BankInfo'

@@ -87,7 +87,7 @@ export const topCategoryStyles = {
       bg: "bg-pink-100",
       indicator: "bg-pink-700",
     },
-    icon: "/icons/shopping-bag.svg",
+    icon: "/icons/car.svg",
   },
   TRANSPORTATION: {
     bg: "bg-pink-25",
@@ -100,7 +100,7 @@ export const topCategoryStyles = {
       bg: "bg-pink-100",
       indicator: "bg-pink-700",
     },
-    icon: "/icons/shopping-bag.svg",
+    icon: "/icons/car.svg",
   },
   default: {
     bg: "bg-success-25",
