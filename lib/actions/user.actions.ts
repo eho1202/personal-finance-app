@@ -236,41 +236,40 @@ export async function getLoggedInUser() {
 
 export const logoutAccount = async () => {
     try {
-        // Create session client to get the current session
-        const { data: session, error } = await sessionClient.getSession();
-
-        if (error) {
-            console.error("Error getting session:", error);
-            return null;
-        }
-
-        // Delete the session on the server side using Better Auth
-        if (session) {
-            await auth.api.signOut({
-                headers: {
-                    cookie: `better-auth.session_token=${session}`,
-                },
-            });
-        }
-
-        // Delete cookies associated with the user
         const cookieStore = await cookies();
-        cookieStore.delete('better-auth.session_token');
+        const sessionToken = cookieStore.get('better-auth.session_token');
 
-        // Delete the current session from MongoDB
-        if (session && session.user) {
+        if (!sessionToken) {
+            console.log("No session token found");
+            return { success: false, error: "No active session" };
+        }
+
+        // Use Better Auth's server-side signOut
+        await auth.api.signOut({
+            headers: {
+                cookie: `better-auth.session_token=${sessionToken.value}`,
+            },
+        });
+
+        // Optional: Manually delete from MongoDB if Better Auth doesn't handle it
+        // (Better Auth should handle this automatically, but you can keep it for safety)
+        try {
             const db = await getDatabase();
             const sessionsCollection = db.collection('session');
-            
-            // Delete the session document from MongoDB
-            await sessionsCollection.deleteOne({ userId: session.user.id });
+            await sessionsCollection.deleteOne({ token: sessionToken.value });
+        } catch (dbError) {
+            console.error("Error deleting session from MongoDB:", dbError);
+            // Don't fail the logout if this fails
         }
 
+        // Delete the cookie
+        cookieStore.delete('better-auth.session_token');
+
         console.log("User logged out successfully");
-        return true;
+        return { success: true };
     } catch (error) {
         console.error("Error logging out:", error);
-        return null;
+        return { success: false, error: String(error) };
     }
 }
 
